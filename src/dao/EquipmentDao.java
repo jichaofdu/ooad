@@ -32,6 +32,16 @@ public class EquipmentDao {
         }
     }
 
+    public static Equipment getEquipmentById(int id){
+        Session session = MySessionFactory.getSession();
+        Query<Equipment> query = session.createQuery(
+                "select i from Equipment i where i.id = :id",Equipment.class
+        ).setParameter("id",id);
+        Equipment equipment = query.uniqueResult();
+        session.close();
+        return equipment;
+    }
+
     public static ArrayList<Equipment> getEquipmentList(){
         Session session = MySessionFactory.getSession();
         Query<Equipment> query = session.createQuery(

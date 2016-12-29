@@ -4,11 +4,10 @@ import dao.BackupDao;
 import dao.EquipmentDao;
 import entity.Backup;
 import entity.Equipment;
-
-import java.awt.*;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 /**
  * Created by jichao on 2016/12/26.
@@ -154,9 +153,59 @@ public class ManagerSystem {
             return 0;
         }else{
             //1.检测是否是数字
-            //2.执行报废操作
+            boolean isInteger = isInteger(read);
+            if(isInteger == false){
+                System.out.println("你输入的数字不合法。");
+                return -1;
+            }
+            //2.查询数据并返回
+            int equipmentId = Integer.parseInt(read);
+            Equipment equipment = EquipmentDao.getEquipmentById(equipmentId);
+            if(equipment == null){
+                System.out.println("查无此设备");
+                System.out.println();
+                return -1;
+            }else{
+                System.out.println("----------------------");
+                System.out.println("设备ID：" + equipment.getId());
+                System.out.println("设备名称：" + equipment.getName());
+                System.out.println("采购时间：" + equipment.getPurchaseDate());
+                if(equipment.getScrapeDate() == null || equipment.getScrapeDate().equals("null")){
+                    System.out.println("报废时间：尚未报废");
+                }else{
+                    System.out.println("报废时间：" + equipment.getScrapeDate());
+                }
+                System.out.println("----------------------");
+            }
+            //3.确认报废等操作
+            if(equipment.getScrapeDate() != null){
+                System.out.println("此设备已报废");
+                return 0;
+            }else{
+                System.out.println("确认要报废吗？ [Y]是 [N]不报废");
+                Scanner scanConfirm = new Scanner(System.in);
+                String readConfirm = scanConfirm.nextLine();
+                if(readConfirm.length() == 1 && (readConfirm.charAt(0) == 'Y' || readConfirm.charAt(0) == 'N')){
+                    if(readConfirm.charAt(0) == 'N'){
+                        System.out.println("你选择了不报废设备");
+                        return -1;
+                    }else{
+                        equipment.setScrapeDate(new Timestamp(System.currentTimeMillis()));
+                        int result = EquipmentDao.saveOrUpdateEquipment(equipment);
+                        if(result == EquipmentDao.SAVEORUPDATE_SUCCESS){
+                            System.out.println("报废设备成功");
+                            return 0;
+                        }else{
+                            System.out.println("报废设备失败");
+                            return -1;
+                        }
+                    }
+                }else{
+                    System.out.println("输入不合法.");
+                    return -1;
+                }
+            }
         }
-        return 0;
     }
 
     private int addBackup(){
@@ -191,9 +240,58 @@ public class ManagerSystem {
             return 0;
         }else{
             //1.检测是否是数字
-            //2.执行报废操作
+            boolean isInteger = isInteger(read);
+            if(isInteger == false){
+                System.out.println("你输入的数字不合法。");
+                return -1;
+            }
+            //2.查询数据并返回
+            int backupId = Integer.parseInt(read);
+            Backup backup = BackupDao.getBackupById(backupId);
+            if(backup == null){
+                System.out.println("查无此备件");
+                return -1;
+            }else{
+                System.out.println("----------------------");
+                System.out.println("备件ID：" + backup.getId());
+                System.out.println("备件名称：" + backup.getName());
+                System.out.println("采购时间：" + backup.getPurchaseDate());
+                if(backup.getScrapeDate() == null || backup.getScrapeDate().equals("null")){
+                    System.out.println("报废时间：尚未报废");
+                }else{
+                    System.out.println("报废时间：" + backup.getScrapeDate());
+                }
+                System.out.println("----------------------");
+            }
+            //3.确认报废等操作
+            if(backup.getScrapeDate() != null){
+                System.out.println("此备件已报废");
+                return 0;
+            }else{
+                System.out.println("确认要报废吗？ [Y]是 [N]不报废");
+                Scanner scanConfirm = new Scanner(System.in);
+                String readConfirm = scanConfirm.nextLine();
+                if(readConfirm.length() == 1 && (readConfirm.charAt(0) == 'Y' || readConfirm.charAt(0) == 'N')){
+                    if(readConfirm.charAt(0) == 'N'){
+                        System.out.println("你选择了不报废备件");
+                        return -1;
+                    }else{
+                        backup.setScrapeDate(new Timestamp(System.currentTimeMillis()));
+                        int result = BackupDao.saveOrUpdateBackup(backup);
+                        if(result == BackupDao.SAVEORUPDATE_SUCCESS){
+                            System.out.println("报废备件成功");
+                            return 0;
+                        }else{
+                            System.out.println("报废备件失败");
+                            return -1;
+                        }
+                    }
+                }else{
+                    System.out.println("输入不合法.");
+                    return -1;
+                }
+            }
         }
-        return 0;
     }
 
     private int viewStaffBorrowAndReturn(){
@@ -225,5 +323,8 @@ public class ManagerSystem {
         }
     }
 
-
+    public static boolean isInteger(String str) {
+        Pattern pattern = Pattern.compile("^[-\\+]?[\\d]*$");
+        return pattern.matcher(str).matches();
+    }
 }

@@ -30,6 +30,16 @@ public class BackupDao {
         }
     }
 
+    public static Backup getBackupById(int id){
+        Session session = MySessionFactory.getSession();
+        Query<Backup> query = session.createQuery(
+                "select i from Backup i where i.id = :id",Backup.class
+        ).setParameter("id",id);
+        Backup backup = query.uniqueResult();
+        session.close();
+        return backup;
+    }
+
     public static ArrayList<Backup> getBackupList(){
         Session session = MySessionFactory.getSession();
         Query<Backup> query = session.createQuery(
