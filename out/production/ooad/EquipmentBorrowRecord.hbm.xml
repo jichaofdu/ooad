@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping
+        PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class name="entity.EquipmentBorrowRecord" table="equipment_borrow_record">
+        <id name="id" column="id" type="int">
+            <generator class="native"/>
+        </id>
+        <property name="userId" column="userId" type="int"/>
+        <property name="equipmentId" column="equipmentId" type="int"/>
+        <property name="borrowDate" column="borrowDate" type="java.sql.Timestamp"/>
+        <property name="returnDate" column="returnDate" type="java.sql.Timestamp"/>
+    </class>
+</hibernate-mapping>
