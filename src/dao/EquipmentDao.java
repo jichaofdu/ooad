@@ -1,11 +1,13 @@
 package dao;
 
 import entity.Equipment;
+import entity.EquipmentBorrowRecord;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import util.MySessionFactory;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,5 +58,49 @@ public class EquipmentDao {
         return resultList;
     }
 
+/*    public static boolean isBorrowed(int equipmentId){
+        Session session = MySessionFactory.getSession();
+        Query<EquipmentBorrowRecord> query = session.createQuery("select max(i) from EquipmentBorrowRecord i where i.equipmentId = :id", EquipmentBorrowRecord.class)
+                .setParameter("id", equipmentId);
+        EquipmentBorrowRecord record = query.uniqueResult();
+        session.close();
+        if(record == null){
+            return true;
+        }else {
+            return false;
+        }
+    }*/
+
+    public static Timestamp[] getEquipmentDate(int equipmentId){
+        Timestamp[] equipmentDate = new Timestamp[2];
+        Session session = MySessionFactory.getSession();
+        Query<EquipmentBorrowRecord> query = session.createQuery("select max(i) from EquipmentBorrowRecord i where i.equipmentId = :id", EquipmentBorrowRecord.class)
+                .setParameter("id", equipmentId);
+        EquipmentBorrowRecord record = query.uniqueResult();
+        session.close();
+        if(record == null){
+            equipmentDate[0] = null;
+            equipmentDate[1] = null;
+        }else {
+            equipmentDate[0] = record.getBorrowDate();
+            equipmentDate[1] = record.getReturnDate();
+        }
+        return equipmentDate;
+    }
+
+    public static int borrowEquipment(EquipmentBorrowRecord record){
+        Session session = MySessionFactory.getSession();
+        Transaction tx = session.beginTransaction();
+        try{
+            session.saveOrUpdate(record);
+            tx.commit();
+            session.close();
+            return SAVEORUPDATE_SUCCESS;
+        }catch(Exception e){
+            tx.rollback();
+            e.printStackTrace();
+            return SAVEORUPDATE_FAIL;
+        }
+    }
 
 }
