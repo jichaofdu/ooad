@@ -148,6 +148,10 @@ public class StaffSystem {
                     if(equipmentDate[0] == null || equipmentDate[1] != null){
                         System.out.println("确认要租借该设备吗？Y：N");
                         String temp = sc.next();
+                        while (!temp.trim().equalsIgnoreCase("Y") && !temp.trim().equalsIgnoreCase("N")){
+                            System.out.println("输入有误，请输入Y或N");
+                            temp = sc.next();
+                        }
                         if(temp.trim().equalsIgnoreCase("Y")){
                             EquipmentBorrowRecord newRecord = new EquipmentBorrowRecord();
                             newRecord.setUserId(currentUser.getId());
@@ -166,8 +170,6 @@ public class StaffSystem {
                         }else if(temp.trim().equalsIgnoreCase("N")){
                             System.out.println("你取消了租借操作");
                             return 0;
-                        }else {
-                            System.out.println("输入有误，请输入Y或N");
                         }
                     }else {
                         System.out.println("对不起，该设备尚未被归还，不能租借");
@@ -185,6 +187,70 @@ public class StaffSystem {
     }
 
     private int returnEquipment(){
+        System.out.println("请输入你想要归还的设备ID：");
+        Scanner sc = new Scanner(System.in);
+        String read = sc.next();
+        if(read.length() == 1 && read.charAt(0) == 'Q'){
+            System.out.println("你取消了借设备的操作。");
+            return 0;
+        }else{
+            boolean isInteger = isInteger(read);
+            if(!isInteger){
+                System.out.println("你输入的数字不合法。");
+                return -1;
+            }
+            int equipmentId = Integer.parseInt(read);
+            System.out.println(currentUser.getId() + " " + equipmentId);
+            EquipmentBorrowRecord record = EquipmentDao.getUserEquipmentById(currentUser.getId(), equipmentId);
+            if(record == null){
+                System.out.println("您的库存中没有此设备，请检查后再进行归还");
+                return -1;
+            }else {
+                if(record.getReturnDate() != null){
+                    System.out.println("您的设备已归还，无需再进行归还");
+                    return 0;
+                }else {
+                    Equipment equipment = EquipmentDao.getEquipmentById(equipmentId);
+                    System.out.println("----------------------");
+                    System.out.println("设备ID：" + equipment.getId());
+                    System.out.println("设备名称：" + equipment.getName());
+                    System.out.println("采购时间：" + equipment.getPurchaseDate());
+                    if(equipment.getScrapeDate() == null || equipment.getScrapeDate().equals("null")){
+                        System.out.println("报废时间：尚未报废");
+                        System.out.println("租借时间：" + record.getBorrowDate());
+                        System.out.println("归还时间：尚未归还");
+                    }else{
+                        System.out.println("报废时间：" + equipment.getScrapeDate());
+                    }
+
+                    System.out.println("----------------------");
+                }
+                if(record.getReturnDate() == null){
+                    System.out.println("确定要归还该设备吗？Y:N");
+                    String temp = sc.next();
+                    while(!temp.trim().equalsIgnoreCase("Y") && !temp.trim().equalsIgnoreCase("N")){
+                        System.out.println("输入有误，请输入Y或N");
+                        temp = sc.next();
+                    }
+                    if(temp.trim().equalsIgnoreCase("Y")){
+                        record.setReturnDate(new Timestamp(System.currentTimeMillis()));
+                        int result = EquipmentDao.borrowEquipment(record);
+                        if(result == EquipmentDao.SAVEORUPDATE_SUCCESS){
+                            System.out.println("归还成功！");
+                            return 0;
+                        }else {
+                            System.out.println("归还失败！");
+                            return -1;
+                        }
+                    }else{
+                        System.out.println("你取消了归还操作");
+                        return 0;
+                    }
+                }
+
+            }
+
+        }
         return 0;
     }
 

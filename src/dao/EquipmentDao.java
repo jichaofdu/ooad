@@ -58,19 +58,6 @@ public class EquipmentDao {
         return resultList;
     }
 
-/*    public static boolean isBorrowed(int equipmentId){
-        Session session = MySessionFactory.getSession();
-        Query<EquipmentBorrowRecord> query = session.createQuery("select max(i) from EquipmentBorrowRecord i where i.equipmentId = :id", EquipmentBorrowRecord.class)
-                .setParameter("id", equipmentId);
-        EquipmentBorrowRecord record = query.uniqueResult();
-        session.close();
-        if(record == null){
-            return true;
-        }else {
-            return false;
-        }
-    }*/
-
     public static Timestamp[] getEquipmentDate(int equipmentId){
         Timestamp[] equipmentDate = new Timestamp[2];
         Session session = MySessionFactory.getSession();
@@ -100,6 +87,19 @@ public class EquipmentDao {
             tx.rollback();
             e.printStackTrace();
             return SAVEORUPDATE_FAIL;
+        }
+    }
+
+    public static EquipmentBorrowRecord getUserEquipmentById(int userId, int equipmentId){
+        Session session = MySessionFactory.getSession();
+        Query<EquipmentBorrowRecord> query = session.createQuery("select max(i) from EquipmentBorrowRecord i where i.equipmentId = :equipmentId and i.userId = :userId", EquipmentBorrowRecord.class)
+                .setParameter("userId", userId).setParameter("equipmentId", equipmentId);
+        EquipmentBorrowRecord record = query.uniqueResult();
+        session.close();
+        if(record == null){
+            return null;
+        }else {
+            return record;
         }
     }
 
