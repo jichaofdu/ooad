@@ -21,6 +21,8 @@ public class StaffSystem {
     private static final char SELECT_BORROW_BACKUP = 'E';
     private static final char SELECT_RETURN_BACKUP = 'F';
     private static final char SELECT_VIEW_MY_HOLD = 'G';
+    private static final char SELECT_VIEW_EQUIPMENT_LIST_BY_KEY_WORDS = 'H';
+    private static final char SELECT_VIEW_BACKUP_LIST_BY_KEY_WORDS = 'I';
     private static final char SELECT_QUIT_STAFF_SYSTEM = 'Q';
     private static ArrayList<Character> SELECT_SET;
     private Staff currentUser;
@@ -36,7 +38,8 @@ public class StaffSystem {
         SELECT_SET.add(SELECT_RETURN_BACKUP);
         SELECT_SET.add(SELECT_VIEW_MY_HOLD);
         SELECT_SET.add(SELECT_QUIT_STAFF_SYSTEM);
-
+        SELECT_SET.add(SELECT_VIEW_EQUIPMENT_LIST_BY_KEY_WORDS);
+        SELECT_SET.add(SELECT_VIEW_BACKUP_LIST_BY_KEY_WORDS);
         while(true){
             System.out.println("请输入您的id。按[Q]退出员工系统");
             Scanner sc = new Scanner(System.in);
@@ -64,7 +67,8 @@ public class StaffSystem {
 
         while(true){
             System.out.println("请选择您要进行的操作: [A]查看本人设备借还记录 [B]查看本人备件借还记录");
-            System.out.println("[C]租借设备 [D]归还设备 [E]租借备件 [F]归还备件 [G]查看持有设备和备件 [Q]退出员工系统");
+            System.out.println("[C]租借设备 [D]归还设备 [E]租借备件 [F]归还备件 [G]查看持有设备和备件");
+            System.out.println("[H]根据关键字搜索设备 [I]根据关键字搜索备件 [Q]退出员工系统");
             char modeSelection = getSelectionMode();
             switch (modeSelection){
                 case SELECT_VIEW_MY_BORROW_EQUIPMENT_RECORD:
@@ -87,6 +91,12 @@ public class StaffSystem {
                     break;
                 case SELECT_VIEW_MY_HOLD:
                     viewMyHold();
+                    break;
+                case SELECT_VIEW_EQUIPMENT_LIST_BY_KEY_WORDS:
+                    viewEquipmentListByKeyWords();
+                    break;
+                case SELECT_VIEW_BACKUP_LIST_BY_KEY_WORDS:
+                    viewBackupListByKeyWords();
                     break;
                 case SELECT_QUIT_STAFF_SYSTEM:
                     System.out.println("员工系统关闭中....");
@@ -304,6 +314,14 @@ public class StaffSystem {
         return 0;
     }
 
+    private int viewEquipmentListByKeyWords(){
+        return 0;
+    }
+
+    private int viewBackupListByKeyWords(){
+        return 0;
+    }
+
     public static char getSelectionMode(){
         Scanner scan = new Scanner(System.in);
         char selection;
@@ -314,8 +332,9 @@ public class StaffSystem {
                 return selection;
             }else{
                 System.out.println("您的输入不合法。请重新选择");
-                System.out.println("请选择您要进行的操作: [A]查看设备借还记录 [B]查看备件借还记录");
-                System.out.println("[C]租借设备 [D]归还设备 [E]租借备件 [F]归还备件 [G]查看持有设备和备件 [Q]退出员工系统");
+                System.out.println("请选择您要进行的操作: [A]查看本人设备借还记录 [B]查看本人备件借还记录");
+                System.out.println("[C]租借设备 [D]归还设备 [E]租借备件 [F]归还备件 [G]查看持有设备和备件");
+                System.out.println("[H]根据关键字搜索设备 [I]根据关键字搜索备件 [Q]退出员工系统");
             }
         }
     }
