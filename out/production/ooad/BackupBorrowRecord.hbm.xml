@@ -4,7 +4,7 @@
         "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-    <class name="entity.BackupBorrowRecord" table="back_borrow_record">
+    <class name="entity.BackupBorrowRecord" table="backup_borrow_record">
         <id name="id" column="id" type="int">
             <generator class="native"/>
         </id>

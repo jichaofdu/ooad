@@ -1,9 +1,8 @@
 package program;
 
-import dao.BackupDao;
-import dao.EquipmentDao;
-import entity.Backup;
-import entity.Equipment;
+import dao.*;
+import entity.*;
+
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -24,6 +23,8 @@ public class ManagerSystem {
     private static final char SELECT_VIEW_STAFF_BORROW_AND_RETURN = 'G';
     private static final char SELECT_VIEW_EQUIPMENT_BORROW_AND_RETURN = 'H';
     private static final char SELECT_VIEW_BACKUP_BORROW_AND_RETURN = 'I';
+    private static final char SELECT_ADD_STAFF = 'J';
+    private static final char SELECT_VIEW_STAFF_LIST = 'K';
     private static final char SELECT_QUIT_STAFF_SYSTEM = 'Q';
     private static ArrayList<Character> SELECT_SET;
 
@@ -39,12 +40,15 @@ public class ManagerSystem {
         SELECT_SET.add(SELECT_VIEW_STAFF_BORROW_AND_RETURN);
         SELECT_SET.add(SELECT_VIEW_EQUIPMENT_BORROW_AND_RETURN);
         SELECT_SET.add(SELECT_VIEW_BACKUP_BORROW_AND_RETURN);
+        SELECT_SET.add(SELECT_ADD_STAFF);
+        SELECT_SET.add(SELECT_VIEW_STAFF_LIST);
         SELECT_SET.add(SELECT_QUIT_STAFF_SYSTEM);
 
         while(true){
             System.out.println("请选择您要进行的操作: [A]浏览设备列表 [B]浏览备件列表");
             System.out.println("[C]新增设备 [D]报废设备 [E]新增备件 [F]报废备件");
-            System.out.println("[G]查看员工借还记录 [H]查看设备借还记录 [I]查看备件借还记录 [Q]退出管理员系统");
+            System.out.println("[G]查看员工借还记录 [H]查看设备借还记录 [I]查看备件借还记录");
+            System.out.println("[J]添加员工 [K]查看员工列表 [Q]退出管理员系统");
             char modeSelection = getSelectionMode();
             switch (modeSelection){
                 case SELECT_VIEW_EQUIPMENT_LIST:
@@ -73,6 +77,12 @@ public class ManagerSystem {
                     break;
                 case SELECT_VIEW_BACKUP_BORROW_AND_RETURN:
                     viewBackupBorrowAndReturn();
+                    break;
+                case SELECT_ADD_STAFF:
+                    addStaff();
+                    break;
+                case SELECT_VIEW_STAFF_LIST:
+                    viewStaffList();
                     break;
                 case SELECT_QUIT_STAFF_SYSTEM:
                     System.out.println("管理员系统关闭中....");
@@ -295,14 +305,176 @@ public class ManagerSystem {
     }
 
     private int viewStaffBorrowAndReturn(){
+        System.out.println("请输入要查看所有借还记录的员工ID。 按[Q]取消添加返回上级");
+        Scanner scan = new Scanner(System.in);
+        String read = scan.nextLine();
+        if(read.length() == 1 && read.charAt(0) == 'Q'){
+            System.out.println("你取消了查看设备借还记录的操作。");
+            return 0;
+        }else {
+            //1.检测是否是数字
+            boolean isInteger = isInteger(read);
+            if (isInteger == false) {
+                System.out.println("你输入的数字不合法。");
+                return -1;
+            }
+            int staffId = Integer.parseInt(read);
+            //2.从数据库中查看这个人的设备借还记录
+            ArrayList<EquipmentBorrowRecord> equipmentBorrowRecords = EquipmentBorrowRecordDao
+                    .getEquipmentBorrowRecordListByStaffId(staffId);
+            System.out.println("以下是此员工的设备借还记录");
+            for(int i = 0;i < equipmentBorrowRecords.size();i++){
+                System.out.println("----------------------");
+                System.out.println("租借记录ID：" + equipmentBorrowRecords.get(i).getId());
+                System.out.print("租借设备ID：" + equipmentBorrowRecords.get(i).getEquipmentId());
+                System.out.println("  租借设备名称：" + EquipmentDao.getEquipmentById(equipmentBorrowRecords.get(i)
+                        .getEquipmentId()).getName());
+                System.out.println("租借时间：" + equipmentBorrowRecords.get(i).getBorrowDate());
+                if(equipmentBorrowRecords.get(i).getReturnDate() == null){
+                    System.out.println("归还时间：尚未归还");
+                }else{
+                    System.out.println("归还时间：" + equipmentBorrowRecords.get(i).getReturnDate());
+                }
+            }
+            System.out.println("----------------------");
+            System.out.println();
+            //3.从数据库中查看这个人的备件借还记录
+            ArrayList<BackupBorrowRecord> backupBorrowRecords = BackupBorrowRecordDao
+                    .getBorrowBorrowRecordListByStaffId(staffId);
+            for(int i = 0;i < backupBorrowRecords.size();i++){
+                System.out.println("----------------------");
+                System.out.println("租借记录ID：" + backupBorrowRecords.get(i).getId());
+                System.out.print("租借备件ID：" + backupBorrowRecords.get(i).getBackupId());
+                System.out.println("  租借备件名称：" + BackupDao.getBackupById(backupBorrowRecords.get(i).getBackupId()).getName());
+                System.out.print("安装设备ID：" + backupBorrowRecords.get(i).getEquipmentId());
+                System.out.println("  安装设备名称：" + EquipmentDao.getEquipmentById(backupBorrowRecords.get(i).getEquipmentId()).getName());
+                System.out.println("租借时间：" + backupBorrowRecords.get(i).getBorrowDate());
+                if(backupBorrowRecords.get(i).getReturnDate() == null){
+                    System.out.println("归还时间：尚未归还");
+                }else{
+                    System.out.println("归还时间：" + backupBorrowRecords.get(i).getReturnDate());
+                }
+            }
+            System.out.println("----------------------");
+            System.out.println();
+            //4.总结
+            System.out.println("共搜索到设备借还记录 " + equipmentBorrowRecords.size() + " 条");
+            System.out.println("共搜索到备件借还记录 " + backupBorrowRecords.size() + " 条");
+            System.out.println();
+        }
         return 0;
     }
 
     private int viewEquipmentBorrowAndReturn(){
+        System.out.println("请输入要查看借还记录的设备的id。 按[Q]取消添加返回上级");
+        Scanner scan = new Scanner(System.in);
+        String read = scan.nextLine();
+        if(read.length() == 1 && read.charAt(0) == 'Q'){
+            System.out.println("你取消了查看设备借还记录的操作。");
+            return 0;
+        }else {
+            //1.检测是否是数字
+            boolean isInteger = isInteger(read);
+            if (isInteger == false) {
+                System.out.println("你输入的数字不合法。");
+                return -1;
+            }
+            //2.查找相关的记录
+            int equipmentId = Integer.parseInt(read);
+            ArrayList<EquipmentBorrowRecord> equipmentBorrowRecords = EquipmentBorrowRecordDao
+                    .getEquipmentBorrowRecordListByEquipmentId(equipmentId);
+            for(int i = 0;i < equipmentBorrowRecords.size();i++){
+                System.out.println("----------------------");
+                System.out.println("租借记录ID：" + equipmentBorrowRecords.get(i).getId());
+                System.out.println("租借员工ID：" + equipmentBorrowRecords.get(i).getUserId());
+                System.out.println("租借员工姓名：" + StaffDao.getUserById(equipmentBorrowRecords.get(i).getUserId()).getName());
+                System.out.println("租借时间：" + equipmentBorrowRecords.get(i).getBorrowDate());
+                if(equipmentBorrowRecords.get(i).getReturnDate() == null){
+                    System.out.println("归还时间：尚未归还");
+                }else{
+                    System.out.println("归还时间：" + equipmentBorrowRecords.get(i).getReturnDate());
+                }
+            }
+            System.out.println("----------------------");
+            System.out.println("共查到 " + equipmentBorrowRecords.size() + " 条记录");
+            System.out.println();
+        }
         return 0;
     }
 
     private int viewBackupBorrowAndReturn(){
+        System.out.println("请输入要查看借还记录的备件的id。 按[Q]取消添加返回上级");
+        Scanner scan = new Scanner(System.in);
+        String read = scan.nextLine();
+        if(read.length() == 1 && read.charAt(0) == 'Q'){
+            System.out.println("你取消了查看备件借还记录的操作。");
+            return 0;
+        }else {
+            //1.检测是否是数字
+            boolean isInteger = isInteger(read);
+            if (isInteger == false) {
+                System.out.println("你输入的数字不合法。");
+                return -1;
+            }
+            //2.查找相关的记录
+            int backupId = Integer.parseInt(read);
+            ArrayList<BackupBorrowRecord> backupBorrowRecords = BackupBorrowRecordDao
+                    .getBorrowBorrowRecordListByBackupId(backupId);
+            for(int i = 0;i < backupBorrowRecords.size();i++){
+                System.out.println("----------------------");
+                System.out.println("租借记录ID：" + backupBorrowRecords.get(i).getId());
+                System.out.print("租借员工ID：" + backupBorrowRecords.get(i).getUserId());
+                System.out.println("  租借员工姓名：" + StaffDao.getUserById(backupBorrowRecords.get(i).getUserId()).getName());
+                System.out.print("安装设备ID：" + backupBorrowRecords.get(i).getEquipmentId());
+                System.out.println("  安装设备名称：" + EquipmentDao.getEquipmentById(backupBorrowRecords.get(i).getEquipmentId()).getName());
+                System.out.println("租借时间：" + backupBorrowRecords.get(i).getBorrowDate());
+                if(backupBorrowRecords.get(i).getReturnDate() == null){
+                    System.out.println("归还时间：尚未归还");
+                }else{
+                    System.out.println("归还时间：" + backupBorrowRecords.get(i).getReturnDate());
+                }
+            }
+            System.out.println("----------------------");
+            System.out.println("共查到 " + backupBorrowRecords.size() + " 条记录");
+            System.out.println();
+        }
+        return 0;
+    }
+
+    private int addStaff(){
+        System.out.println("请输入要添加员工的姓名 按[Q]取消添加返回上级");
+        Scanner scan = new Scanner(System.in);
+        String read = scan.nextLine();
+        if(read.length() == 1 && read.charAt(0) == 'Q'){
+            System.out.println("你取消了员工的添加操作。");
+            return 0;
+        }else{
+            String staffName = read;
+            Staff staff = new Staff();
+            staff.setName(staffName);
+            int result = StaffDao.insertUser(staff);
+            if(result == StaffDao.INSERT_SUCCESS){
+                System.out.println("员工添加成功");
+                return 0;
+            }else{
+                System.out.println("员工添加失败");
+                return -1;
+            }
+        }
+
+    }
+
+    private int viewStaffList(){
+        System.out.println("以下是查询到的员工列表");
+        ArrayList<Staff> staffs = StaffDao.getStaffList();
+        for(int i = 0;i < staffs.size();i++){
+            System.out.println("----------------------");
+            System.out.println("员工ID：" + staffs.get(i).getId());
+            System.out.println("员工姓名：" + staffs.get(i).getName());
+        }
+        System.out.println("----------------------");
+        System.out.println("共查到 " + staffs.size() + " 条记录");
+        System.out.println();
         return 0;
     }
 
@@ -318,7 +490,8 @@ public class ManagerSystem {
                 System.out.println("您的输入不合法。请重新选择");
                 System.out.println("请选择您要进行的操作: [A]浏览设备列表 [B]浏览备件列表");
                 System.out.println("[C]新增设备 [D]报废设备 [E]新增备件 [F]报废备件");
-                System.out.println("[G]查看员工借还记录 [H]查看设备借还记录 [I]查看备件借还记录 [Q]退出管理员系统");
+                System.out.println("[G]查看员工借还记录 [H]查看设备借还记录 [I]查看备件借还记录");
+                System.out.println("[J]添加员工 [Q]退出管理员系统");
             }
         }
     }

@@ -37,7 +37,7 @@ public class Launcher {
                 break;
             }
         }
-
+        System.out.println("系统已关闭");
     }
 
     public static char getSelectionMode(){

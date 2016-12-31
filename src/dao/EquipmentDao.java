@@ -75,21 +75,6 @@ public class EquipmentDao {
         return equipmentDate;
     }
 
-    public static int borrowEquipment(EquipmentBorrowRecord record){
-        Session session = MySessionFactory.getSession();
-        Transaction tx = session.beginTransaction();
-        try{
-            session.saveOrUpdate(record);
-            tx.commit();
-            session.close();
-            return SAVEORUPDATE_SUCCESS;
-        }catch(Exception e){
-            tx.rollback();
-            e.printStackTrace();
-            return SAVEORUPDATE_FAIL;
-        }
-    }
-
     public static EquipmentBorrowRecord getUserEquipmentById(int userId, int equipmentId){
         Session session = MySessionFactory.getSession();
         Query<EquipmentBorrowRecord> query = session.createQuery("select max(i) from EquipmentBorrowRecord i where i.equipmentId = :equipmentId and i.userId = :userId", EquipmentBorrowRecord.class)
