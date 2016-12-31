@@ -1,8 +1,7 @@
 package program;
 
-import dao.EquipmentBorrowRecordDao;
-import dao.EquipmentDao;
-import dao.StaffDao;
+import dao.*;
+import entity.BackupBorrowRecord;
 import entity.Equipment;
 import entity.EquipmentBorrowRecord;
 import entity.Staff;
@@ -98,10 +97,52 @@ public class StaffSystem {
     }
 
     private int viewMyBorrowEquipmentRecord(){
+        int staffId = currentUser.getId();
+        ArrayList<EquipmentBorrowRecord> equipmentBorrowRecords = EquipmentBorrowRecordDao
+                .getEquipmentBorrowRecordListByStaffId(staffId);
+        System.out.println("以下是您的的设备借还记录");
+        for(int i = 0;i < equipmentBorrowRecords.size();i++){
+            System.out.println("----------------------");
+            System.out.println("租借记录ID：" + equipmentBorrowRecords.get(i).getId());
+            System.out.print("租借设备ID：" + equipmentBorrowRecords.get(i).getEquipmentId());
+            System.out.println("  租借设备名称：" + EquipmentDao.getEquipmentById(equipmentBorrowRecords.get(i)
+                    .getEquipmentId()).getName());
+            System.out.println("租借时间：" + equipmentBorrowRecords.get(i).getBorrowDate());
+            if(equipmentBorrowRecords.get(i).getReturnDate() == null){
+                System.out.println("归还时间：尚未归还");
+            }else{
+                System.out.println("归还时间：" + equipmentBorrowRecords.get(i).getReturnDate());
+            }
+        }
+        System.out.println("----------------------");
+        System.out.println();
+        System.out.println("共搜索到设备借还记录 " + equipmentBorrowRecords.size() + " 条");
+        System.out.println();
         return 0;
     }
 
     private int viewMyBorrowBackupRecord(){
+        int staffId = currentUser.getId();
+        ArrayList<BackupBorrowRecord> backupBorrowRecords = BackupBorrowRecordDao
+                .getBorrowBorrowRecordListByStaffId(staffId);
+        for(int i = 0;i < backupBorrowRecords.size();i++){
+            System.out.println("----------------------");
+            System.out.println("租借记录ID：" + backupBorrowRecords.get(i).getId());
+            System.out.print("租借备件ID：" + backupBorrowRecords.get(i).getBackupId());
+            System.out.println("  租借备件名称：" + BackupDao.getBackupById(backupBorrowRecords.get(i).getBackupId()).getName());
+            System.out.print("安装设备ID：" + backupBorrowRecords.get(i).getEquipmentId());
+            System.out.println("  安装设备名称：" + EquipmentDao.getEquipmentById(backupBorrowRecords.get(i).getEquipmentId()).getName());
+            System.out.println("租借时间：" + backupBorrowRecords.get(i).getBorrowDate());
+            if(backupBorrowRecords.get(i).getReturnDate() == null){
+                System.out.println("归还时间：尚未归还");
+            }else{
+                System.out.println("归还时间：" + backupBorrowRecords.get(i).getReturnDate());
+            }
+        }
+        System.out.println("----------------------");
+        System.out.println();
+        System.out.println("共搜索到备件借还记录 " + backupBorrowRecords.size() + " 条");
+        System.out.println();
         return 0;
     }
 

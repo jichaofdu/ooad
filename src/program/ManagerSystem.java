@@ -318,7 +318,7 @@ public class ManagerSystem {
                 System.out.println("你输入的数字不合法。");
                 return -1;
             }
-            int staffId = Integer.parseInt(read);
+           int staffId = Integer .parseInt(read);
             //2.从数据库中查看这个人的设备借还记录
             ArrayList<EquipmentBorrowRecord> equipmentBorrowRecords = EquipmentBorrowRecordDao
                     .getEquipmentBorrowRecordListByStaffId(staffId);
