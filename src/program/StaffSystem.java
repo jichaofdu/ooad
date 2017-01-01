@@ -760,10 +760,58 @@ public class StaffSystem {
     }
 
     private int viewEquipmentListByKeyWords(){
+        System.out.println("请输入设备的关键词。按[Q]返回上级");
+        Scanner sc = new Scanner(System.in);
+        String read = sc.next();
+        if(read.length() == 1 && read.charAt(0) == 'Q'){
+            System.out.println("你取消了通过关键词查找设备的操作");
+            return -1;
+        }else{
+            String keyWords = read;
+            ArrayList<Equipment> equipments = EquipmentDao.getEquipmentListByKeyWords(keyWords);
+            for(int i = 0;i < equipments.size();i++){
+                System.out.println("----------------------");
+                System.out.println("设备ID：" + equipments.get(i).getId());
+                System.out.println("设备名称：" + equipments.get(i).getName());
+                System.out.println("采购时间：" + equipments.get(i).getPurchaseDate());
+                if(equipments.get(i).getScrapeDate() == null || equipments.get(i).getScrapeDate().equals("null")){
+                    System.out.println("报废时间：尚未报废");
+                }else{
+                    System.out.println("报废时间：" + equipments.get(i).getScrapeDate());
+                }
+            }
+            System.out.println("----------------------");
+            System.out.println("共查到 " + equipments.size() + " 条记录");
+            System.out.println();
+        }
         return 0;
     }
 
     private int viewBackupListByKeyWords(){
+        System.out.println("请输入备件的关键词。按[Q]返回上级");
+        Scanner sc = new Scanner(System.in);
+        String read = sc.next();
+        if(read.length() == 1 && read.charAt(0) == 'Q'){
+            System.out.println("你取消了通过关键词查找备件的操作");
+            return -1;
+        }else{
+            String keyWords = read;
+            ArrayList<Backup> backups = BackupDao.getBackupListByKeyWords(keyWords);
+            for(int i = 0;i < backups.size();i++){
+                System.out.println("----------------------");
+                System.out.println("备件ID：" + backups.get(i).getId());
+                System.out.println("备件名称：" + backups.get(i).getName());
+                System.out.println("采购时间：" + backups.get(i).getPurchaseDate());
+                if(backups.get(i).getScrapeDate() == null || backups.get(i).getScrapeDate().equals("null")){
+                    System.out.println("报废时间：尚未报废");
+                }else{
+                    System.out.println("报废时间：" + backups.get(i).getScrapeDate());
+                }
+            }
+            System.out.println("----------------------");
+            System.out.println("共查到 " + backups.size() + " 条记录");
+            System.out.println();
+        }
         return 0;
     }
 

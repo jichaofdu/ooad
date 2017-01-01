@@ -52,6 +52,26 @@ public class EquipmentDao {
     }
 
     /**
+     * 根据关键字模糊查询
+     * @param keywords 关键词
+     * @return 根据关键词查询到的结果
+     */
+    public static ArrayList<Equipment> getEquipmentListByKeyWords(String keywords){
+        Session session = MySessionFactory.getSession();
+        String queryString = " select i from Equipment i where i.name like '%" + keywords + "%'";
+        Query<Equipment> query = session.createQuery(
+                queryString,Equipment.class
+        );
+        List<Equipment> list = query.list();
+        session.getClass();
+        ArrayList<Equipment> resultList = new ArrayList<>();
+        for(int i = 0;i < list.size();i++){
+            resultList.add(list.get(i));
+        }
+        return resultList;
+    }
+
+    /**
      * 获取数据库中所有设备的列表
      * @return 设备列表ArrayList
      */
