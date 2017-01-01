@@ -118,11 +118,9 @@ public class BackupBorrowRecordDao {
         List<BackupBorrowRecord> records = query.list();
         session.close();
         ArrayList<BackupBorrowRecord> result = new ArrayList<>();
-        if(records != null && records.size() > 0){
+        if(records != null && records.size() > 0) {
             result.addAll(records);
-            return result;
-        }else {
-            return null;
         }
+        return result;
     }
 }

@@ -435,9 +435,10 @@ public class StaffSystem {
     //输入不合法 -2
     //没有借用 -3
     //已经归还 -4
-    //系统归还失败 -5
-    //最后一步放弃归还 -6
-    //不明状态 -7
+    //备件没移除 -5
+    //系统归还失败 -6
+    //最后一步放弃归还 -7
+    //不明状态 -8
     private int returnBackup(){
         System.out.println("请输入需要归还的备件ID。按[Q]返回");
         Scanner sc = new Scanner(System.in);
@@ -463,7 +464,7 @@ public class StaffSystem {
                 }else {
                     if(backupBorrowRecord.getEquipmentId() != 0){
                         System.out.println("此备件已经安装到设备上，请将备件移除后在进行归还");
-                        return -1;
+                        return -5;
                     }else {
                         Backup backup = BackupDao.getBackupById(backupId);
                         System.out.println("----------------------");
@@ -478,7 +479,7 @@ public class StaffSystem {
                             System.out.println("报废时间：" + backup.getScrapeDate());
                         }
                         System.out.println("----------------------");
-                        System.out.println("是否要归还该备件？Y:N");
+                        System.out.println("是否要归还该备件？[Y]归还 [N]暂不归还");
                         String temp = sc.next();
                         while (!temp.trim().equalsIgnoreCase("Y") && !temp.trim().equalsIgnoreCase("N")){
                             System.out.println("输入有误，请输入 [Y]归还 或 [N]暂不归还");
@@ -486,7 +487,7 @@ public class StaffSystem {
                         }
                         if(temp.trim().equalsIgnoreCase("N")){
                             System.out.println("你取消了归还操作");
-                            return 0;
+                            return -7;
                         }else if(temp.trim().equalsIgnoreCase("Y")){
                             backupBorrowRecord.setReturnDate(new Timestamp(System.currentTimeMillis()));
                             int result = BackupBorrowRecordDao.borrowBackup(backupBorrowRecord);
@@ -495,14 +496,16 @@ public class StaffSystem {
                                 return 0;
                             }else {
                                 System.out.println("归还失败");
-                                return -1;
+                                return -6;
                             }
+                        }else{
+                            System.out.println("[警告]不明状态");
+                            return -8;
                         }
                     }
                 }
             }
         }
-        return 0;
     }
 
     private int setupBackup(){
@@ -726,7 +729,6 @@ public class StaffSystem {
             }
             System.out.println("----------------------");
             System.out.println("你共持有 " + equipmentRecords.size() + " 件设备");
-            System.out.println();
         }else {
             System.out.println("你当前不持有任何设备。");
         }
@@ -735,7 +737,7 @@ public class StaffSystem {
         ArrayList<BackupBorrowRecord> backupRecords = BackupBorrowRecordDao.getOwnBackup(currentUser.getId());
         if(backupRecords != null && backupRecords.size() > 0){
             for(BackupBorrowRecord backupBorrowRecord : backupRecords){
-                Backup backup = BackupDao.getBackupById(backupBorrowRecord.getEquipmentId());
+                Backup backup = BackupDao.getBackupById(backupBorrowRecord.getBackupId());
                 System.out.println("----------------------");
                 System.out.println("备件ID：" + backup.getId());
                 System.out.println("备件名称：" + backup.getName());
@@ -750,10 +752,10 @@ public class StaffSystem {
             }
             System.out.println("----------------------");
             System.out.println("你共持有 " + backupRecords.size() + " 件备件");
-            System.out.println();
         }else {
             System.out.println("你当前不持有任何备件。");
         }
+        System.out.println();
         return equipmentRecords.size() + backupRecords.size();
     }
 

@@ -99,19 +99,17 @@ public class EquipmentBorrowRecordDao {
         }
     }
 
-    public static ArrayList<EquipmentBorrowRecord> getOwnEquipment(int userId){
+    public static ArrayList<EquipmentBorrowRecord> getOwnEquipment(int userId) {
         Session session = MySessionFactory.getSession();
         Query<EquipmentBorrowRecord> query =
                 session.createQuery("select i from EquipmentBorrowRecord i where i.userId = :userId and i.returnDate is null",
                         EquipmentBorrowRecord.class)
-                .setParameter("userId", userId);
+                        .setParameter("userId", userId);
         List<EquipmentBorrowRecord> list = query.list();
         ArrayList<EquipmentBorrowRecord> result = new ArrayList<>();
-        if(list != null && list.size() > 0){
+        if (list != null && list.size() > 0) {
             result.addAll(list);
-            return result;
-        }else {
-            return null;
         }
+        return result;
     }
 }
