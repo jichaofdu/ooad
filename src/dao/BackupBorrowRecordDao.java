@@ -5,7 +5,6 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import util.MySessionFactory;
-
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -64,7 +63,8 @@ public class BackupBorrowRecordDao {
 
     public static BackupBorrowRecord getUserBackupById(int userId, int backupId){
         Session session = MySessionFactory.getSession();
-        Query<BackupBorrowRecord> query = session.createQuery("select max(i) from BackupBorrowRecord i where i.backupId = :backupId and i.userId = :userId", BackupBorrowRecord.class)
+        Query<BackupBorrowRecord> query =
+                session.createQuery("select max(i) from BackupBorrowRecord i where i.backupId = :backupId and i.userId = :userId", BackupBorrowRecord.class)
                 .setParameter("userId", userId).setParameter("backupId", backupId);
         BackupBorrowRecord record = query.uniqueResult();
         session.close();
@@ -90,7 +90,6 @@ public class BackupBorrowRecordDao {
         }else {
             return null;
         }
-
     }
 
     public static Timestamp[] getBackupDate(int backupId){
@@ -112,7 +111,9 @@ public class BackupBorrowRecordDao {
 
     public static ArrayList<BackupBorrowRecord> getOwnBackup(int userId){
         Session session = MySessionFactory.getSession();
-        Query<BackupBorrowRecord> query = session.createQuery("select i from BackupBorrowRecord i where i.userId = :userId and i.returnDate is null", BackupBorrowRecord.class)
+        Query<BackupBorrowRecord> query =
+                session.createQuery("select i from BackupBorrowRecord i where i.userId = :userId and i.returnDate is null",
+                        BackupBorrowRecord.class)
                 .setParameter("userId", userId);
         List<BackupBorrowRecord> records = query.list();
         session.close();

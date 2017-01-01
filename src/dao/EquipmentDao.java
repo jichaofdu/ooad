@@ -5,7 +5,6 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import util.MySessionFactory;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +16,11 @@ public class EquipmentDao {
     public static final int SAVEORUPDATE_SUCCESS = 200;
     public static final int SAVEORUPDATE_FAIL = 201;
 
+    /**
+     * 向数据库新增条目，或者更新数据库中的某个设备的数据
+     * @param equipment 要保存或者更新的数据库的信息
+     * @return 返回指令执行结果，200表示成功，201表示失败
+     */
     public static int saveOrUpdateEquipment(Equipment equipment){
         Session session = MySessionFactory.getSession();
         Transaction tx = session.beginTransaction();
@@ -32,6 +36,11 @@ public class EquipmentDao {
         }
     }
 
+    /**
+     * 根据设备的id来获取设备
+     * @param id 希望获取的设备的id
+     * @return id对应的设备
+     */
     public static Equipment getEquipmentById(int id){
         Session session = MySessionFactory.getSession();
         Query<Equipment> query = session.createQuery(
@@ -42,6 +51,10 @@ public class EquipmentDao {
         return equipment;
     }
 
+    /**
+     * 获取数据库中所有设备的列表
+     * @return 设备列表ArrayList
+     */
     public static ArrayList<Equipment> getEquipmentList(){
         Session session = MySessionFactory.getSession();
         Query<Equipment> query = session.createQuery(
@@ -55,7 +68,4 @@ public class EquipmentDao {
         }
         return resultList;
     }
-
-
-
 }

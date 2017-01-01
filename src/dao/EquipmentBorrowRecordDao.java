@@ -5,19 +5,23 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import util.MySessionFactory;
-
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by chaoj on 2016/12/31.
+ * Created by jichao on 2016/12/31.
  */
 public class EquipmentBorrowRecordDao {
 
-    public static final int SAVEORUPDATE_SUCCESS = 200;
-    public static final int SAVEORUPDATE_FAIL = 201;
+    public static final int SAVEORUPDATE_SUCCESS = 400;
+    public static final int SAVEORUPDATE_FAIL = 401;
 
+    /**
+     * 租借设备，向数据库中增加一个租借条目
+     * @param record 记录的具体内容
+     * @return 返回新增成功或者失败。
+     */
     public static int borrowEquipment(EquipmentBorrowRecord record){
         Session session = MySessionFactory.getSession();
         Transaction tx = session.beginTransaction();
@@ -50,7 +54,8 @@ public class EquipmentBorrowRecordDao {
     public static ArrayList<EquipmentBorrowRecord> getEquipmentBorrowRecordListByEquipmentId(int equipmentId){
         Session session = MySessionFactory.getSession();
         Query<EquipmentBorrowRecord> query = session.createQuery(
-                "select i from EquipmentBorrowRecord i where i.equipmentId = :equipmentId",EquipmentBorrowRecord.class
+                "select i from EquipmentBorrowRecord i where i.equipmentId = :equipmentId",
+                EquipmentBorrowRecord.class
         ).setParameter("equipmentId",equipmentId);
         List<EquipmentBorrowRecord> list  = query.list();
         session.getClass();
@@ -64,7 +69,8 @@ public class EquipmentBorrowRecordDao {
     public static Timestamp[] getEquipmentDate(int equipmentId){
         Timestamp[] equipmentDate = new Timestamp[2];
         Session session = MySessionFactory.getSession();
-        Query<EquipmentBorrowRecord> query = session.createQuery("select max(i) from EquipmentBorrowRecord i where i.equipmentId = :id", EquipmentBorrowRecord.class)
+        Query<EquipmentBorrowRecord> query = session.createQuery("select max(i) from EquipmentBorrowRecord i where i.equipmentId = :id",
+                EquipmentBorrowRecord.class)
                 .setParameter("id", equipmentId);
         EquipmentBorrowRecord record = query.uniqueResult();
         session.close();
@@ -80,7 +86,9 @@ public class EquipmentBorrowRecordDao {
 
     public static EquipmentBorrowRecord getUserEquipmentById(int userId, int equipmentId){
         Session session = MySessionFactory.getSession();
-        Query<EquipmentBorrowRecord> query = session.createQuery("select max(i) from EquipmentBorrowRecord i where i.equipmentId = :equipmentId and i.userId = :userId", EquipmentBorrowRecord.class)
+        Query<EquipmentBorrowRecord> query =
+                session.createQuery("select max(i) from EquipmentBorrowRecord i where i.equipmentId = :equipmentId and i.userId = :userId",
+                        EquipmentBorrowRecord.class)
                 .setParameter("userId", userId).setParameter("equipmentId", equipmentId);
         EquipmentBorrowRecord record = query.uniqueResult();
         session.close();
@@ -93,7 +101,9 @@ public class EquipmentBorrowRecordDao {
 
     public static ArrayList<EquipmentBorrowRecord> getOwnEquipment(int userId){
         Session session = MySessionFactory.getSession();
-        Query<EquipmentBorrowRecord> query = session.createQuery("select i from EquipmentBorrowRecord i where i.userId = :userId and i.returnDate is null", EquipmentBorrowRecord.class)
+        Query<EquipmentBorrowRecord> query =
+                session.createQuery("select i from EquipmentBorrowRecord i where i.userId = :userId and i.returnDate is null",
+                        EquipmentBorrowRecord.class)
                 .setParameter("userId", userId);
         List<EquipmentBorrowRecord> list = query.list();
         ArrayList<EquipmentBorrowRecord> result = new ArrayList<>();

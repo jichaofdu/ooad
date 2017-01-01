@@ -387,7 +387,7 @@ public class ManagerSystem {
                 System.out.println("----------------------");
                 System.out.println("租借记录ID：" + equipmentBorrowRecords.get(i).getId());
                 System.out.println("租借员工ID：" + equipmentBorrowRecords.get(i).getUserId());
-                System.out.println("租借员工姓名：" + StaffDao.getUserById(equipmentBorrowRecords.get(i).getUserId()).getName());
+                System.out.println("租借员工姓名：" + StaffDao.getStaffById(equipmentBorrowRecords.get(i).getUserId()).getName());
                 System.out.println("租借时间：" + equipmentBorrowRecords.get(i).getBorrowDate());
                 if(equipmentBorrowRecords.get(i).getReturnDate() == null){
                     System.out.println("归还时间：尚未归还");
@@ -424,7 +424,7 @@ public class ManagerSystem {
                 System.out.println("----------------------");
                 System.out.println("租借记录ID：" + backupBorrowRecords.get(i).getId());
                 System.out.print("租借员工ID：" + backupBorrowRecords.get(i).getUserId());
-                System.out.println("  租借员工姓名：" + StaffDao.getUserById(backupBorrowRecords.get(i).getUserId()).getName());
+                System.out.println("  租借员工姓名：" + StaffDao.getStaffById(backupBorrowRecords.get(i).getUserId()).getName());
                 System.out.print("安装设备ID：" + backupBorrowRecords.get(i).getEquipmentId());
                 System.out.println("  安装设备名称：" + EquipmentDao.getEquipmentById(backupBorrowRecords.get(i).getEquipmentId()).getName());
                 System.out.println("租借时间：" + backupBorrowRecords.get(i).getBorrowDate());
@@ -452,7 +452,7 @@ public class ManagerSystem {
             String staffName = read;
             Staff staff = new Staff();
             staff.setName(staffName);
-            int result = StaffDao.insertUser(staff);
+            int result = StaffDao.insertStaff(staff);
             if(result == StaffDao.INSERT_SUCCESS){
                 System.out.println("员工添加成功");
                 return 0;
@@ -461,7 +461,6 @@ public class ManagerSystem {
                 return -1;
             }
         }
-
     }
 
     private int viewStaffList(){

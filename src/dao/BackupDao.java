@@ -13,8 +13,8 @@ import java.util.List;
  * Created by jichao on 2016/12/26.
  */
 public class BackupDao {
-    public static final int SAVEORUPDATE_SUCCESS = 200;
-    public static final int SAVEORUPDATE_FAIL = 201;
+    public static final int SAVEORUPDATE_SUCCESS = 300;
+    public static final int SAVEORUPDATE_FAIL = 301;
 
     public static int saveOrUpdateBackup(Backup backup){
         Session session = MySessionFactory.getSession();
@@ -31,6 +31,11 @@ public class BackupDao {
         }
     }
 
+    /**
+     * 根据备件的id获取备件
+     * @param id 希望获取的备件的id
+     * @return   id对应的那个备件
+     */
     public static Backup getBackupById(int id){
         Session session = MySessionFactory.getSession();
         Query<Backup> query = session.createQuery(
@@ -41,6 +46,10 @@ public class BackupDao {
         return backup;
     }
 
+    /**
+     * 获取数据中的所有备件的列表
+     * @return 备件列表ArrayList
+     */
     public static ArrayList<Backup> getBackupList(){
         Session session = MySessionFactory.getSession();
         Query<Backup> query = session.createQuery(

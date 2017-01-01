@@ -16,7 +16,12 @@ public class StaffDao {
     public static final int INSERT_SUCCESS = 100;
     public static final int INSERT_FAIL = 101;
 
-    public static Staff getUserById(int id){
+    /**
+     * 通过id获取员工的信息
+     * @param id 要获取的那个员工的Id
+     * @return 返回的员工的信息
+     */
+    public static Staff getStaffById(int id){
         Session session = MySessionFactory.getSession();
         Query<Staff> query = session.createQuery(
                 "select i from Staff i where i.id = :id",Staff.class
@@ -26,6 +31,10 @@ public class StaffDao {
         return staff;
     }
 
+    /**
+     * 获取数据库中所有员工的列表
+     * @return 员工列表ArrayList
+     */
     public static ArrayList<Staff> getStaffList(){
         Session session = MySessionFactory.getSession();
         Query<Staff> query = session.createQuery(
@@ -40,7 +49,12 @@ public class StaffDao {
         return resultList;
     }
 
-    public static int insertUser(Staff newStaff){
+    /**
+     * 向数据库中新增一个员工条目
+     * @param newStaff 新增的员工的信息
+     * @return 新增结果。100表示成功，101表示失败
+     */
+    public static int insertStaff(Staff newStaff){
         Session session = MySessionFactory.getSession();
         Transaction tx = session.beginTransaction();
         try{

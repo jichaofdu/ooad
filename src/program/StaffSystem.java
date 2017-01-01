@@ -1,8 +1,15 @@
 package program;
 
-import dao.*;
-import entity.*;
-
+import dao.StaffDao;
+import dao.BackupDao;
+import dao.EquipmentDao;
+import dao.EquipmentBorrowRecordDao;
+import dao.BackupBorrowRecordDao;
+import entity.BackupBorrowRecord;
+import entity.EquipmentBorrowRecord;
+import entity.Staff;
+import entity.Equipment;
+import entity.Backup;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +17,7 @@ import java.util.Scanner;
 import java.util.regex.Pattern;
 
 /**
- * Created by chaoj on 2016/12/28.
+ * Created by jichao on 2016/12/28.
  */
 public class StaffSystem {
     private static final char SELECT_VIEW_MY_BORROW_EQUIPMENT_RECORD = 'A';
@@ -43,6 +50,7 @@ public class StaffSystem {
         SELECT_SET.add(SELECT_QUIT_STAFF_SYSTEM);
         SELECT_SET.add(SELECT_VIEW_EQUIPMENT_LIST_BY_KEY_WORDS);
         SELECT_SET.add(SELECT_VIEW_BACKUP_LIST_BY_KEY_WORDS);
+        //1.
         while(true){
             System.out.println("请输入您的id。按[Q]退出员工系统");
             Scanner sc = new Scanner(System.in);
@@ -55,7 +63,7 @@ public class StaffSystem {
             if(!isInteger){
                 System.out.println("你输入的ID不合法。");
             }else{
-                Staff staff = StaffDao.getUserById(Integer.parseInt(read));
+                Staff staff = StaffDao.getStaffById(Integer.parseInt(read));
                 if(staff == null){
                     System.out.println("查无此人");
                 }
@@ -66,8 +74,6 @@ public class StaffSystem {
                 }
             }
         }
-
-
         while(true){
             System.out.println("请选择您要进行的操作: [A]查看本人设备借还记录 [B]查看本人备件借还记录");
             System.out.println("[C]租借设备 [D]归还设备 [E]租借备件 [F]归还备件 [G]安装备件 [H]移除备件 [I]查看持有设备和备件");
@@ -134,10 +140,9 @@ public class StaffSystem {
             }
         }
         System.out.println("----------------------");
-        System.out.println();
         System.out.println("共搜索到设备借还记录 " + equipmentBorrowRecords.size() + " 条");
         System.out.println();
-        return 0;
+        return equipmentBorrowRecords.size();
     }
 
     private int viewMyBorrowBackupRecord(){
@@ -165,24 +170,32 @@ public class StaffSystem {
             }
         }
         System.out.println("----------------------");
-        System.out.println();
         System.out.println("共搜索到备件借还记录 " + backupBorrowRecords.size() + " 条");
         System.out.println();
-        return 0;
+        return backupBorrowRecords.size();
     }
 
+    //租借成功 0
+    //取消租借 -1
+    //输入数字不合法 -2
+    //查无此设备 -3
+    //设备已报废 -4
+    //设备已借出 -5
+    //最后一步放弃租借 -6
+    //系统租借失败 -7
+    //异常状态 -8
     private int borrowEquipment(){
         System.out.println("请输入您想要租借的设备ID。按[Q]返回");
         Scanner sc = new Scanner(System.in);
         String read = sc.next();
         if(read.length() == 1 && read.charAt(0) == 'Q'){
             System.out.println("你取消了租借设备的操作");
-            return 0;
+            return -1;
         }else{
             boolean isInteger = isInteger(read);
             if(!isInteger){
                 System.out.println("你输入的数字不合法");
-                return -1;
+                return -2;
             }
             int equipmentId = Integer.parseInt(read);
             Equipment equipment = EquipmentDao.getEquipmentById(equipmentId);
@@ -190,7 +203,7 @@ public class StaffSystem {
             if(equipment == null){
                 System.out.println("查无此设备");
                 System.out.println();
-                return -1;
+                return -3;
             }else{
                 System.out.println("----------------------");
                 System.out.println("设备ID：" + equipment.getId());
@@ -198,28 +211,28 @@ public class StaffSystem {
                 System.out.println("采购时间：" + equipment.getPurchaseDate());
                 if(equipment.getScrapeDate() == null || equipment.getScrapeDate().equals("null")){
                     System.out.println("报废时间：尚未报废");
-                    if(equipmentDate[0] != null){
-                        System.out.println("租借时间：" + equipmentDate[0]);
-                        if(equipmentDate[1] != null){
-                            System.out.println("归还时间：" + equipmentDate[1]);
-                        }else {
-                            System.out.println("归还时间：尚未归还");
-                        }
-                    }else {
-                        System.out.println("租借时间：尚未租借");
-                        System.out.println("归还时间：尚未归还");
-                    }
+//                    if(equipmentDate[0] != null){
+//                        System.out.println("租借时间：" + equipmentDate[0]);
+//                        if(equipmentDate[1] != null){
+//                            System.out.println("归还时间：" + equipmentDate[1]);
+//                        }else {
+//                            System.out.println("归还时间：尚未归还");
+//                        }
+//                    }else {
+//                        System.out.println("租借时间：尚未租借");
+//                        System.out.println("归还时间：尚未归还");
+//                    }
                 }else{
                     System.out.println("报废时间：" + equipment.getScrapeDate());
                 }
                 System.out.println("----------------------");
                 if(!(equipment.getScrapeDate() == null || equipment.getScrapeDate().equals("null"))){
                     System.out.println("对不起，该设备已报废，不能借出");
-                    return -1;
+                    return -4;
                 }else {
                     if(!(equipmentDate[0] == null || equipmentDate[1] != null)){
                         System.out.println("对不起，该设备尚未被归还，不能租借");
-                        return 0;
+                        return -5;
                     }else {
                         System.out.println("确认要租借该设备吗？ [Y]租借 [N]暂不租借");
                         String temp = sc.next();
@@ -229,7 +242,7 @@ public class StaffSystem {
                         }
                         if(temp.trim().equalsIgnoreCase("N")){
                             System.out.println("你取消了租借操作");
-                            return 0;
+                            return -6;
                         }else if(temp.trim().equalsIgnoreCase("Y")){
                             EquipmentBorrowRecord newRecord = new EquipmentBorrowRecord();
                             newRecord.setUserId(currentUser.getId());
@@ -237,43 +250,52 @@ public class StaffSystem {
                             newRecord.setBorrowDate(new Timestamp(System.currentTimeMillis()));
                             newRecord.setReturnDate(null);
                             int result = EquipmentBorrowRecordDao.borrowEquipment(newRecord);
-                            if(result == EquipmentDao.SAVEORUPDATE_SUCCESS){
+                            if(result == EquipmentBorrowRecordDao.SAVEORUPDATE_SUCCESS){
                                 System.out.println("租借成功");
                                 return 0;
                             }else {
                                 System.out.println("租借失败");
-                                return -1;
+                                return -7;
                             }
+                        }else{
+                            System.out.println("[警告]不明状态");
+                            return -8;
                         }
                     }
                 }
             }
-            return 0;
         }
     }
 
+    //取消归还 -1
+    //输入不合法 -2
+    //没有借用 -3
+    //已经归还 -4
+    //系统归还失败 -5
+    //最后一步放弃归还 -6
+    //不明状态 -7
     private int returnEquipment(){
-        System.out.println("请输入你想要归还的设备ID：");
+        System.out.println("请输入你想要归还的设备ID。。按[Q]返回");
         Scanner sc = new Scanner(System.in);
         String read = sc.next();
         if(read.length() == 1 && read.charAt(0) == 'Q'){
             System.out.println("你取消了归还设备的操作。");
-            return 0;
+            return -1;
         }else{
             boolean isInteger = isInteger(read);
             if(!isInteger){
                 System.out.println("你输入的数字不合法");
-                return -1;
+                return -2;
             }
             int equipmentId = Integer.parseInt(read);
             EquipmentBorrowRecord record = EquipmentBorrowRecordDao.getUserEquipmentById(currentUser.getId(), equipmentId);
             if(record == null){
                 System.out.println("您没有借用此设备，请检查后再进行归还");
-                return -1;
+                return -3;
             }else {
                 if(record.getReturnDate() != null){
                     System.out.println("您的设备已归还，无需再进行归还");
-                    return 0;
+                    return -4;
                 }else {
                     Equipment equipment = EquipmentDao.getEquipmentById(equipmentId);
                     System.out.println("----------------------");
@@ -288,8 +310,6 @@ public class StaffSystem {
                         System.out.println("报废时间：" + equipment.getScrapeDate());
                     }
                     System.out.println("----------------------");
-                }
-                if(record.getReturnDate() == null){
                     System.out.println("确定要归还该设备吗？ [Y]归还 [N]暂不归还");
                     String temp = sc.next();
                     while(!temp.trim().equalsIgnoreCase("Y") && !temp.trim().equalsIgnoreCase("N")){
@@ -299,35 +319,46 @@ public class StaffSystem {
                     if(temp.trim().equalsIgnoreCase("Y")){
                         record.setReturnDate(new Timestamp(System.currentTimeMillis()));
                         int result = EquipmentBorrowRecordDao.borrowEquipment(record);
-                        if(result == EquipmentDao.SAVEORUPDATE_SUCCESS){
+                        if(result == EquipmentBorrowRecordDao.SAVEORUPDATE_SUCCESS){
                             System.out.println("归还成功");
                             return 0;
                         }else {
                             System.out.println("归还失败");
-                            return -1;
+                            return -5;
                         }
-                    }else{
+                    }else if(temp.trim().equalsIgnoreCase("N")){
                         System.out.println("你取消了归还操作");
-                        return 0;
+                        return -6;
+                    }else{
+                        System.out.println("[警告]状态不明");
+                        return -7;
                     }
                 }
             }
         }
-        return 0;
     }
 
+    //租借成功 0
+    //取消租借 -1
+    //输入数字不合法 -2
+    //查无此设备 -3
+    //设备已报废 -4
+    //设备已借出 -5
+    //最后一步放弃租借 -6
+    //系统租借失败 -7
+    //不明状态 -8
     private int borrowBackup(){
         System.out.println("请输入您想要租借的备件ID。按[Q]返回");
         Scanner sc = new Scanner(System.in);
         String read = sc.next();
         if(read.length() == 1 && read.charAt(0) == 'Q'){
             System.out.println("你取消了租借备件的操作");
-            return 0;
+            return -1;
         }else{
             boolean isInteger = isInteger(read);
             if(!isInteger){
                 System.out.println("你输入的数字不合法");
-                return -1;
+                return -2;
             }
             int backupId = Integer.parseInt(read);
             Backup backup = BackupDao.getBackupById(backupId);
@@ -335,36 +366,36 @@ public class StaffSystem {
             if(backup == null){
                 System.out.println("查无此备件");
                 System.out.println();
-                return -1;
+                return -3;
             }else{
                 System.out.println("----------------------");
-                System.out.println("设备ID：" + backup.getId());
-                System.out.println("设备名称：" + backup.getName());
+                System.out.println("备件ID：" + backup.getId());
+                System.out.println("备件名称：" + backup.getName());
                 System.out.println("采购时间：" + backup.getPurchaseDate());
                 if(backup.getScrapeDate() == null || backup.getScrapeDate().equals("null")){
                     System.out.println("报废时间：尚未报废");
-                    if(backupDate[0] != null){
-                        System.out.println("租借时间：" + backupDate[0]);
-                        if(backupDate[1] != null){
-                            System.out.println("归还时间：" + backupDate[1]);
-                        }else {
-                            System.out.println("归还时间：尚未归还");
-                        }
-                    }else {
-                        System.out.println("租借时间：尚未租借");
-                        System.out.println("归还时间：尚未归还");
-                    }
+//                    if(backupDate[0] != null){
+//                        System.out.println("租借时间：" + backupDate[0]);
+//                        if(backupDate[1] != null){
+//                            System.out.println("归还时间：" + backupDate[1]);
+//                        }else {
+//                            System.out.println("归还时间：尚未归还");
+//                        }
+//                    }else {
+//                        System.out.println("租借时间：尚未租借");
+//                        System.out.println("归还时间：尚未归还");
+//                    }
                 }else{
                     System.out.println("报废时间：" + backup.getScrapeDate());
                 }
                 System.out.println("----------------------");
                 if(!(backup.getScrapeDate() == null || backup.getScrapeDate().equals("null"))){
                     System.out.println("对不起，该备件已报废，不能借出");
-                    return -1;
+                    return -4;
                 }else {
                     if(!(backupDate[0] == null || backupDate[1] != null)){
                         System.out.println("对不起，该备件尚未被归还，不能租借");
-                        return 0;
+                        return -5;
                     }else {
                         System.out.println("确认要租借该备件吗？ [Y]租借 [N]暂不租借");
                         String temp = sc.next();
@@ -374,7 +405,7 @@ public class StaffSystem {
                         }
                         if(temp.trim().equalsIgnoreCase("N")){
                             System.out.println("你取消了租借操作");
-                            return 0;
+                            return -6;
                         }else if(temp.trim().equalsIgnoreCase("Y")){
                             BackupBorrowRecord newRecord = new BackupBorrowRecord();
                             newRecord.setUserId(currentUser.getId());
@@ -383,43 +414,52 @@ public class StaffSystem {
                             newRecord.setBorrowDate(new Timestamp(System.currentTimeMillis()));
                             newRecord.setReturnDate(null);
                             int result = BackupBorrowRecordDao.borrowBackup(newRecord);
-                            if(result == EquipmentDao.SAVEORUPDATE_SUCCESS){
+                            if(result == BackupBorrowRecordDao.SAVEORUPDATE_SUCCESS){
                                 System.out.println("租借成功");
                                 return 0;
                             }else {
                                 System.out.println("租借失败");
-                                return -1;
+                                return -7;
                             }
+                        }else{
+                            System.out.println("[警告]不明状态");
+                            return -8;
                         }
                     }
                 }
             }
-            return 0;
         }
     }
 
+    //取消归还 -1
+    //输入不合法 -2
+    //没有借用 -3
+    //已经归还 -4
+    //系统归还失败 -5
+    //最后一步放弃归还 -6
+    //不明状态 -7
     private int returnBackup(){
-        System.out.println("请输入需要归还的备件ID");
+        System.out.println("请输入需要归还的备件ID。按[Q]返回");
         Scanner sc = new Scanner(System.in);
         String read = sc.next();
         if(read.length() == 1 && read.charAt(0) == 'Q'){
             System.out.println("你取消了归还备件的操作");
-            return 0;
+            return -1;
         }else {
             boolean isInteger = isInteger(read);
             if (!isInteger) {
                 System.out.println("你输入的数字不合法");
-                return -1;
+                return -2;
             }
             int backupId = Integer.parseInt(read);
             BackupBorrowRecord backupBorrowRecord = BackupBorrowRecordDao.getUserBackupById(currentUser.getId(), backupId);
             if(backupBorrowRecord == null){
                 System.out.println("您没有租借此备件，请检查后再进行归还");
-                return -1;
+                return -3;
             }else {
                 if(backupBorrowRecord.getReturnDate() != null){
-                    System.out.println("您没有租借此备件，请检查后再进行归还");
-                    return -1;
+                    System.out.println("您的备件已归还，无需再进行归还");
+                    return -4;
                 }else {
                     if(backupBorrowRecord.getEquipmentId() != 0){
                         System.out.println("此备件已经安装到设备上，请将备件移除后在进行归还");
@@ -462,12 +502,11 @@ public class StaffSystem {
                 }
             }
         }
-
         return 0;
     }
 
     private int setupBackup(){
-        System.out.println("请选择需要安装备件的设备ID");
+        System.out.println("请选择需要安装备件的设备ID。按[Q]返回");
         Scanner sc = new Scanner(System.in);
         String read = sc.next();
         if(read.length() == 1 && read.charAt(0) == 'Q'){
@@ -552,7 +591,7 @@ public class StaffSystem {
                                 }else if(tempResult.trim().equalsIgnoreCase("Y")){
                                     backupBorrowRecord.setEquipmentId(equipmentId);
                                     int result = BackupBorrowRecordDao.borrowBackup(backupBorrowRecord);
-                                    if(result == EquipmentDao.SAVEORUPDATE_SUCCESS){
+                                    if(result == BackupBorrowRecordDao.SAVEORUPDATE_SUCCESS){
                                         System.out.println("安装成功");
                                         return 0;
                                     }else {
@@ -569,12 +608,13 @@ public class StaffSystem {
         return 0;
     }
 
+
     private int removeBackup(){
-        System.out.println("请输入需要移除备件的设备ID");
+        System.out.println("请输入需要移除备件的设备ID。按[Q]返回");
         Scanner sc = new Scanner(System.in);
         String read = sc.next();
         if(read.length() == 1 && read.charAt(0) == 'Q'){
-            System.out.println("你取消了安装备件的操作");
+            System.out.println("你取消了移除备件的操作");
             return 0;
         }else{
             boolean isInteger = isInteger(read);
@@ -593,8 +633,8 @@ public class StaffSystem {
                     return -1;
                 }else {
                     ArrayList<BackupBorrowRecord> backupBorrowRecords = BackupBorrowRecordDao.getSetupBackup(currentUser.getId(), equipmentId);
-                    System.out.println("此设备中安装的备件列表如下：");
                     if(backupBorrowRecords != null && backupBorrowRecords.size() > 0){
+                        System.out.println("此设备中安装的备件列表如下：");
                         List<Integer> backupIdList = new ArrayList<>();
                         for(BackupBorrowRecord backupBorrowRecord : backupBorrowRecords){
                             Backup backup = BackupDao.getBackupById(backupBorrowRecord.getBackupId());
@@ -647,7 +687,7 @@ public class StaffSystem {
                                     backupBorrowRecord.setEquipmentId(0);
                                 }
                                 int finalResult = BackupBorrowRecordDao.borrowBackup(backupBorrowRecord);
-                                if(finalResult == EquipmentDao.SAVEORUPDATE_SUCCESS){
+                                if(finalResult == BackupBorrowRecordDao.SAVEORUPDATE_SUCCESS){
                                     System.out.println("移除成功");
                                     return 0;
                                 }else {
@@ -656,15 +696,13 @@ public class StaffSystem {
                                 }
                             }
                         }
-
                     }else {
-                        System.out.println("无");
+                        System.out.println("此设备中没有安装设备");
                         return -1;
                     }
                 }
             }
         }
-
         return 0;
     }
 
@@ -685,10 +723,12 @@ public class StaffSystem {
                 }else{
                     System.out.println("报废时间：" + equipment.getScrapeDate());
                 }
-                System.out.println("----------------------");
             }
+            System.out.println("----------------------");
+            System.out.println("你共持有 " + equipmentRecords.size() + " 件设备");
+            System.out.println();
         }else {
-            System.out.println("无");
+            System.out.println("你当前不持有任何设备。");
         }
         System.out.println();
         System.out.println("以下是您所持有的备件列表：");
@@ -697,8 +737,8 @@ public class StaffSystem {
             for(BackupBorrowRecord backupBorrowRecord : backupRecords){
                 Backup backup = BackupDao.getBackupById(backupBorrowRecord.getEquipmentId());
                 System.out.println("----------------------");
-                System.out.println("设备ID：" + backup.getId());
-                System.out.println("设备名称：" + backup.getName());
+                System.out.println("备件ID：" + backup.getId());
+                System.out.println("备件名称：" + backup.getName());
                 System.out.println("采购时间：" + backup.getPurchaseDate());
                 if(backup.getScrapeDate() == null || backup.getScrapeDate().equals("null")){
                     System.out.println("报废时间：尚未报废");
@@ -707,12 +747,14 @@ public class StaffSystem {
                 }else{
                     System.out.println("报废时间：" + backup.getScrapeDate());
                 }
-                System.out.println("----------------------");
             }
+            System.out.println("----------------------");
+            System.out.println("你共持有 " + backupRecords.size() + " 件备件");
+            System.out.println();
         }else {
-            System.out.println("无");
+            System.out.println("你当前不持有任何备件。");
         }
-        return 0;
+        return equipmentRecords.size() + backupRecords.size();
     }
 
     private int viewEquipmentListByKeyWords(){
