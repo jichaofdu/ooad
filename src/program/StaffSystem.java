@@ -582,7 +582,7 @@ public class StaffSystem {
                                 System.out.println("----------------------");
                             }
                             if(backupBorrowRecord.getReturnDate() == null){
-                                System.out.println("要将此备件安装在设备上吗？Y:N");
+                                System.out.println("要将此备件安装在设备上吗？ [Y]安装 [N]暂不安装");
                                 String tempResult = sc.next();
                                 while (!tempResult.trim().equalsIgnoreCase("Y") && !tempResult.trim().equalsIgnoreCase("N")){
                                     System.out.println("输入有误，请输入 [Y]安装 或 [N]暂不安装");
@@ -675,7 +675,7 @@ public class StaffSystem {
                                     backupId = Integer.parseInt(tempBackupId);
                                 }
                             }
-                            System.out.println("要移除该备件吗？Y:N");
+                            System.out.println("要移除该备件吗？ [Y]移除 [N]暂不移除");
                             String result = sc.next();
                             while (!result.trim().equalsIgnoreCase("Y") && !result.trim().equalsIgnoreCase("N")){
                                 System.out.println("输入有误，请输入 [Y]移除 或 [N]暂不移除");
