@@ -346,8 +346,13 @@ public class ManagerSystem {
                 System.out.println("租借记录ID：" + backupBorrowRecords.get(i).getId());
                 System.out.print("租借备件ID：" + backupBorrowRecords.get(i).getBackupId());
                 System.out.println("  租借备件名称：" + BackupDao.getBackupById(backupBorrowRecords.get(i).getBackupId()).getName());
-                System.out.print("安装设备ID：" + backupBorrowRecords.get(i).getEquipmentId());
-                System.out.println("  安装设备名称：" + EquipmentDao.getEquipmentById(backupBorrowRecords.get(i).getEquipmentId()).getName());
+                if(backupBorrowRecords.get(i).getEquipmentId() == 0){
+                    System.out.print("安装设备ID：" + backupBorrowRecords.get(i).getEquipmentId());
+                    System.out.println("  安装设备名称：尚未安装");
+                }else {
+                    System.out.print("安装设备ID：" + backupBorrowRecords.get(i).getEquipmentId());
+                    System.out.println("  安装设备名称：" + EquipmentDao.getEquipmentById(backupBorrowRecords.get(i).getEquipmentId()).getName());
+                }
                 System.out.println("租借时间：" + backupBorrowRecords.get(i).getBorrowDate());
                 if(backupBorrowRecords.get(i).getReturnDate() == null){
                     System.out.println("归还时间：尚未归还");
@@ -425,8 +430,13 @@ public class ManagerSystem {
                 System.out.println("租借记录ID：" + backupBorrowRecords.get(i).getId());
                 System.out.print("租借员工ID：" + backupBorrowRecords.get(i).getUserId());
                 System.out.println("  租借员工姓名：" + StaffDao.getStaffById(backupBorrowRecords.get(i).getUserId()).getName());
-                System.out.print("安装设备ID：" + backupBorrowRecords.get(i).getEquipmentId());
-                System.out.println("  安装设备名称：" + EquipmentDao.getEquipmentById(backupBorrowRecords.get(i).getEquipmentId()).getName());
+                if(backupBorrowRecords.get(i).getEquipmentId() == 0){
+                    System.out.print("安装设备ID：" + backupBorrowRecords.get(i).getEquipmentId());
+                    System.out.println("  安装设备名称：尚未安装");
+                }else {
+                    System.out.print("安装设备ID：" + backupBorrowRecords.get(i).getEquipmentId());
+                    System.out.println("  安装设备名称：" + EquipmentDao.getEquipmentById(backupBorrowRecords.get(i).getEquipmentId()).getName());
+                }
                 System.out.println("租借时间：" + backupBorrowRecords.get(i).getBorrowDate());
                 if(backupBorrowRecords.get(i).getReturnDate() == null){
                     System.out.println("归还时间：尚未归还");
