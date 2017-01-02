@@ -13,7 +13,6 @@
         <property name="hibernate.connection.username">root</property>
         <property name="hibernate.connection.password">140311jc</property>
 
-
         <!-- 下边是映射关系列表 -->
         <mapping resource="BackUp.hbm.xml"/>
         <mapping resource="BackupBorrowRecord.hbm.xml"/>
@@ -21,14 +20,6 @@
         <mapping resource="EquipmentBorrowRecord.hbm.xml"/>
         <mapping resource="Staff.hbm.xml"/>
 
-        <!--<mapping class="entity.Backup"/>-->
-        <!--<mapping class="entity.BackupBorrowRecord"/>-->
-        <!--<mapping class="entity.Equipment"/>-->
-        <!--<mapping class="entity.EquipmentBorrowRecord"/>-->
-        <!--<mapping class="entity.Staff"/>-->
-
-        <!-- DB schema will be updated if needed -->
-        <!-- <property name="hbm2ddl.auto">update</property> -->
     </session-factory>
 
 
