@@ -10,6 +10,8 @@ import entity.EquipmentBorrowRecord;
 import entity.Staff;
 import entity.Equipment;
 import entity.Backup;
+
+import javax.naming.SizeLimitExceededException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,9 +49,10 @@ public class StaffSystem {
         SELECT_SET.add(SELECT_SETUP_BACKUP);
         SELECT_SET.add(SELECT_REMOVE_BACKUP);
         SELECT_SET.add(SELECT_VIEW_MY_HOLD);
-        SELECT_SET.add(SELECT_QUIT_STAFF_SYSTEM);
         SELECT_SET.add(SELECT_VIEW_EQUIPMENT_LIST_BY_KEY_WORDS);
         SELECT_SET.add(SELECT_VIEW_BACKUP_LIST_BY_KEY_WORDS);
+        SELECT_SET.add(SELECT_QUIT_STAFF_SYSTEM);
+
         //1.
         while(true){
             System.out.println("请输入您的id。按[Q]退出员工系统");
@@ -77,7 +80,7 @@ public class StaffSystem {
         while(true){
             System.out.println("请选择您要进行的操作: [A]查看本人设备借还记录 [B]查看本人备件借还记录");
             System.out.println("[C]租借设备 [D]归还设备 [E]租借备件 [F]归还备件 [G]安装备件 [H]移除备件 [I]查看持有设备和备件");
-            System.out.println("[J]根据关键字搜索设备 [K]根据关键字搜索备件 [Q]退出员工系统");
+            System.out.println("[J]根据关键字搜索设备 [K]根据关键字搜索备件 [L]查看设备的备件安装、更换记录 [Q]退出员工系统");
             char modeSelection = getSelectionMode();
             switch (modeSelection){
                 case SELECT_VIEW_MY_BORROW_EQUIPMENT_RECORD:

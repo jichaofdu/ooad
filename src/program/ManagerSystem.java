@@ -25,6 +25,7 @@ public class ManagerSystem {
     private static final char SELECT_VIEW_BACKUP_BORROW_AND_RETURN = 'I';
     private static final char SELECT_ADD_STAFF = 'J';
     private static final char SELECT_VIEW_STAFF_LIST = 'K';
+    private static final char SELECT_VIEW_EQUIPMENT_BACKUP_INSTALL_RECORD = 'L';
     private static final char SELECT_QUIT_STAFF_SYSTEM = 'Q';
     private static ArrayList<Character> SELECT_SET;
 
@@ -42,13 +43,14 @@ public class ManagerSystem {
         SELECT_SET.add(SELECT_VIEW_BACKUP_BORROW_AND_RETURN);
         SELECT_SET.add(SELECT_ADD_STAFF);
         SELECT_SET.add(SELECT_VIEW_STAFF_LIST);
+        SELECT_SET.add(SELECT_VIEW_EQUIPMENT_BACKUP_INSTALL_RECORD);
         SELECT_SET.add(SELECT_QUIT_STAFF_SYSTEM);
 
         while(true){
             System.out.println("请选择您要进行的操作: [A]浏览设备列表 [B]浏览备件列表");
             System.out.println("[C]新增设备 [D]报废设备 [E]新增备件 [F]报废备件");
             System.out.println("[G]查看员工借还记录 [H]查看设备借还记录 [I]查看备件借还记录");
-            System.out.println("[J]添加员工 [K]查看员工列表 [Q]退出管理员系统");
+            System.out.println("[J]添加员工 [K]查看员工列表 [L]查看设备的备件安装记录 [Q]退出管理员系统");
             char modeSelection = getSelectionMode();
             switch (modeSelection){
                 case SELECT_VIEW_EQUIPMENT_LIST:
@@ -500,7 +502,7 @@ public class ManagerSystem {
                 System.out.println("请选择您要进行的操作: [A]浏览设备列表 [B]浏览备件列表");
                 System.out.println("[C]新增设备 [D]报废设备 [E]新增备件 [F]报废备件");
                 System.out.println("[G]查看员工借还记录 [H]查看设备借还记录 [I]查看备件借还记录");
-                System.out.println("[J]添加员工 [Q]退出管理员系统");
+                System.out.println("[J]添加员工 [K]查看员工列表 [L]查看设备的备件安装记录 [Q]退出管理员系统");
             }
         }
     }
