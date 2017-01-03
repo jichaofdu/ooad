@@ -2,7 +2,6 @@ package program;
 
 import dao.*;
 import entity.*;
-
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -110,7 +109,7 @@ public class ManagerSystem {
         System.out.println("----------------------");
         System.out.println("共查到 " + equipments.size() + " 条记录");
         System.out.println();
-        return 0;
+        return equipments.size();
     }
 
     private int viewBackupList(){
@@ -139,7 +138,7 @@ public class ManagerSystem {
         String read = scan.nextLine();
         if(read.length() == 1 && read.charAt(0) == 'Q'){
             System.out.println("你取消了设备的添加操作。");
-            return 0;
+            return -1;
         }else{
             String equipmentName = read;
             Equipment newEquipment = new Equipment();
@@ -151,7 +150,7 @@ public class ManagerSystem {
                 return 0;
             }else{
                 System.out.println("设备添加失败，请重试");
-                return -1;
+                return -2;
             }
         }
     }
@@ -162,13 +161,13 @@ public class ManagerSystem {
         String read = scan.nextLine();
         if(read.length() == 1 && read.charAt(0) == 'Q'){
             System.out.println("你取消了设备的报废操作。");
-            return 0;
+            return -1;
         }else{
             //1.检测是否是数字
             boolean isInteger = isInteger(read);
             if(isInteger == false){
                 System.out.println("你输入的数字不合法。");
-                return -1;
+                return -2;
             }
             //2.查询数据并返回
             int equipmentId = Integer.parseInt(read);
@@ -176,7 +175,7 @@ public class ManagerSystem {
             if(equipment == null){
                 System.out.println("查无此设备");
                 System.out.println();
-                return -1;
+                return -3;
             }else{
                 System.out.println("----------------------");
                 System.out.println("设备ID：" + equipment.getId());
@@ -192,7 +191,7 @@ public class ManagerSystem {
             //3.确认报废等操作
             if(equipment.getScrapeDate() != null){
                 System.out.println("此设备已报废");
-                return 0;
+                return -4;
             }else{
                 System.out.println("确认要报废吗？ [Y]是 [N]不报废");
                 Scanner scanConfirm = new Scanner(System.in);
@@ -200,7 +199,7 @@ public class ManagerSystem {
                 if(readConfirm.length() == 1 && (readConfirm.charAt(0) == 'Y' || readConfirm.charAt(0) == 'N')){
                     if(readConfirm.charAt(0) == 'N'){
                         System.out.println("你选择了不报废设备");
-                        return -1;
+                        return -5;
                     }else{
                         equipment.setScrapeDate(new Timestamp(System.currentTimeMillis()));
                         int result = EquipmentDao.saveOrUpdateEquipment(equipment);
@@ -209,12 +208,12 @@ public class ManagerSystem {
                             return 0;
                         }else{
                             System.out.println("报废设备失败");
-                            return -1;
+                            return -6;
                         }
                     }
                 }else{
                     System.out.println("输入不合法.");
-                    return -1;
+                    return -7;
                 }
             }
         }
