@@ -95,7 +95,7 @@ public class BackupBorrowRecordDao {
     public static Timestamp[] getBackupDate(int backupId){
         Timestamp[] backupDate = new Timestamp[2];
         Session session = MySessionFactory.getSession();
-        Query<BackupBorrowRecord> query = session.createQuery("select max(i) from BackupBorrowRecord i where i.equipmentId = :id", BackupBorrowRecord.class)
+        Query<BackupBorrowRecord> query = session.createQuery("select max(i) from BackupBorrowRecord i where i.backupId = :id", BackupBorrowRecord.class)
                 .setParameter("id", backupId);
         BackupBorrowRecord record = query.uniqueResult();
         session.close();
