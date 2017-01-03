@@ -225,19 +225,19 @@ public class ManagerSystem {
         String read = scan.nextLine();
         if(read.length() == 1 && read.charAt(0) == 'Q'){
             System.out.println("你取消了备件的添加操作。");
-            return 0;
+            return -1;
         }else{
             String backupName = read;
             Backup newBackup = new Backup();
             newBackup.setName(backupName);
             newBackup.setPurchaseDate(new Timestamp(System.currentTimeMillis()));
             int result = BackupDao.saveOrUpdateBackup(newBackup);
-            if(result == EquipmentDao.SAVEORUPDATE_SUCCESS){
+            if(result == BackupDao.SAVEORUPDATE_SUCCESS){
                 System.out.println("备件添加成功");
                 return 0;
             }else{
                 System.out.println("备件添加失败，请重试");
-                return -1;
+                return -2;
             }
         }
     }
@@ -311,7 +311,7 @@ public class ManagerSystem {
         String read = scan.nextLine();
         if(read.length() == 1 && read.charAt(0) == 'Q'){
             System.out.println("你取消了查看设备借还记录的操作。");
-            return 0;
+            return -1;
         }else {
             //1.检测是否是数字
             boolean isInteger = isInteger(read);
@@ -367,8 +367,8 @@ public class ManagerSystem {
             System.out.println("共搜索到设备借还记录 " + equipmentBorrowRecords.size() + " 条");
             System.out.println("共搜索到备件借还记录 " + backupBorrowRecords.size() + " 条");
             System.out.println();
+            return equipmentBorrowRecords.size() + backupBorrowRecords.size();
         }
-        return 0;
     }
 
     private int viewEquipmentBorrowAndReturn(){
@@ -377,7 +377,7 @@ public class ManagerSystem {
         String read = scan.nextLine();
         if(read.length() == 1 && read.charAt(0) == 'Q'){
             System.out.println("你取消了查看设备借还记录的操作。");
-            return 0;
+            return -1;
         }else {
             //1.检测是否是数字
             boolean isInteger = isInteger(read);
@@ -404,8 +404,8 @@ public class ManagerSystem {
             System.out.println("----------------------");
             System.out.println("共查到 " + equipmentBorrowRecords.size() + " 条记录");
             System.out.println();
+            return equipmentBorrowRecords.size();
         }
-        return 0;
     }
 
     private int viewBackupBorrowAndReturn(){
@@ -414,7 +414,7 @@ public class ManagerSystem {
         String read = scan.nextLine();
         if(read.length() == 1 && read.charAt(0) == 'Q'){
             System.out.println("你取消了查看备件借还记录的操作。");
-            return 0;
+            return -1;
         }else {
             //1.检测是否是数字
             boolean isInteger = isInteger(read);
@@ -448,8 +448,8 @@ public class ManagerSystem {
             System.out.println("----------------------");
             System.out.println("共查到 " + backupBorrowRecords.size() + " 条记录");
             System.out.println();
+            return backupBorrowRecords.size();
         }
-        return 0;
     }
 
     private int addStaff(){
@@ -458,7 +458,7 @@ public class ManagerSystem {
         String read = scan.nextLine();
         if(read.length() == 1 && read.charAt(0) == 'Q'){
             System.out.println("你取消了员工的添加操作。");
-            return 0;
+            return -1;
         }else{
             String staffName = read;
             Staff staff = new Staff();
@@ -469,7 +469,7 @@ public class ManagerSystem {
                 return 0;
             }else{
                 System.out.println("员工添加失败");
-                return -1;
+                return -2;
             }
         }
     }
@@ -485,7 +485,7 @@ public class ManagerSystem {
         System.out.println("----------------------");
         System.out.println("共查到 " + staffs.size() + " 条记录");
         System.out.println();
-        return 0;
+        return staffs.size();
     }
 
     public static char getSelectionMode(){
