@@ -65,8 +65,8 @@ public class EquipmentBorrowRecordDaoTest {
      */
     @Test
     public void testGetEquipmentBorrowRecordListByEquipmentId() throws Exception {
-        assertEquals(1, getEquipmentBorrowRecordListByEquipmentId(3));
-        assertEquals(-1, getEquipmentBorrowRecordListByEquipmentId(300));
+        assertEquals(1, getEquipmentBorrowRecordListByEquipmentId(1));
+        assertEquals(-1, getEquipmentBorrowRecordListByEquipmentId(10000));
     }
 
     private int getEquipmentBorrowRecordListByEquipmentId(int equipmentId){

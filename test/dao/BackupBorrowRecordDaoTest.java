@@ -114,8 +114,8 @@ public class BackupBorrowRecordDaoTest {
      */
     @Test
     public void testGetOwnBackup() throws Exception {
-        assertEquals(-1, getOwnBackup(3));
-        assertEquals(-1, getOwnBackup(1));
+        assertEquals(-1, getOwnBackup(10000));
+        assertEquals(1, getOwnBackup(1));
     }
 
     private int getOwnBackup(int userId){
